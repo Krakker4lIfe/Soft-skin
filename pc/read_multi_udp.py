@@ -1,33 +1,18 @@
 #!/usr/bin/python
+"""
+This script reads the data from the raspberry, and plots the first 2 sensors (or throws errors if there aren't).
+Currently depreciated by read_multi_udp_blit.
+This script doesn't use blitting for performance increase and therefore can be quite slow.
+Because the recv function on line 35 is a blocking function, the graph can lag behind.
 
-# MIT License
-#
-# Copyright (c) 2017 John Bryan Moore, Sampath Vanimisetti
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+When the end of the screen is reached, the window auto rescales.
+"""
 import socket
-
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 
-UDP_IP = "169.254.210.175"
-UDP_PORT1 = 5005
+UDP_IP = "169.254.210.175"  # The ip-address of the receiving pc. May need to be changed.
+UDP_PORT1 = 5005  # The port that is used.
 
 sock1 = socket.socket(socket.AF_INET,  # Internet
                       socket.SOCK_DGRAM)  # UDP
@@ -39,15 +24,19 @@ ax2 = fig.add_subplot(1, 1, 1)
 xarr1 = []
 yarr1 = []
 yarr2 = []
-count = 0
 
 
 def animate(i):
-    global count
+    """
+    This function is responsible for the capture of data and the animation of the graph.
+    :param i: simple counter
+    :return: nothing
+    """
+
     data = sock1.recv(128)
     distance = data.split(" ")
-    count += 1
-    xarr1.append(count)
+
+    xarr1.append(i)
     yarr1.append(distance[0])
     yarr2.append(distance[1])
     ax1.clear()

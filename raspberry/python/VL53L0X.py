@@ -21,11 +21,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+"""
+This file contains the VL53L0x object the others reference to. It is the bridge between python and C.
+It also contains some calibration functions. For more information of the ST library, see the documentation:
+http://www.st.com/en/embedded-software/stsw-img005.html
+"""
 import os
 import sys
 from ctypes import *
-
 import smbus
 
 VL53L0X_GOOD_ACCURACY_MODE = 0  # Good Accuracy mode
@@ -39,6 +42,16 @@ i2cbus = smbus.SMBus(1)
 
 # i2c bus read callback
 def i2c_read(address, reg, data_p, length):
+    """
+    This i2c read function for the entire ST library. Each function of the ST library uses this function to communicate with the VL53L0x chip.
+    Currently uses the smbus library for i2c communication.
+
+    :param address: The address of the device
+    :param reg: The registry address in the device
+    :param data_p: The data
+    :param length: The length of the data
+    :return: The return value. See implementation
+    """
     ret_val = 0
     result = []
 
@@ -56,6 +69,16 @@ def i2c_read(address, reg, data_p, length):
 
 # i2c bus write callback
 def i2c_write(address, reg, data_p, length):
+    """
+    This i2c write function for the entire ST library. Each function of the ST library uses this function to communicate with the VL53L0x chip.
+    Currently uses the smbus library for i2c communication.
+
+    :param address: The address of the device
+    :param reg: The registry address in the device
+    :param data_p: The data
+    :param length: The length of the data
+    :return: The return value. See implementation
+    """
     ret_val = 0
     data = []
 
@@ -122,6 +145,11 @@ class VL53L0X(object):
             return 0
 
     def do_spad_calibration(self):
+        """
+        Custom function. Performs SPAD calibration of the sensor.
+        This function accesses the ST library directly.
+        :return: The status
+        """
         print ("Performing SPAD calibration")
         dev = tof_lib.getDev(self.my_object_number)
         spad_count = c_uint(0)
@@ -134,6 +162,11 @@ class VL53L0X(object):
         return str(status)
 
     def get_SPAD_params(self):
+        """
+        Custom function. Returns current SPAD parameters of the sensor.
+        This function accesses the ST library directly.
+        :return: The status
+        """
         print ("Getting SPAD settings")
         Dev = tof_lib.getDev(self.my_object_number)
         SpadCount = c_uint(0)
@@ -146,6 +179,11 @@ class VL53L0X(object):
         return str(status)
 
     def do_REF_calibration(self):
+        """
+        Custom function. Performs a REF calibration of the sensor.
+        This function accesses the ST library directly.
+        :return: The status
+        """
         print ("Performing REF calibration")
         Dev = tof_lib.getDev(self.my_object_number)
         VhvSettings = c_uint(0)
@@ -189,6 +227,11 @@ class VL53L0X(object):
         return "Error"
 
     def is_connected(self):
+        """
+        Custom function used for auto detection in the VL53L0X_TCA9548A_auto_stream script.
+        Still prints a lot of data from the python library.
+        :return: False if this sensor is not connected, True if connected.
+        """
         sys.stdout = os.devnull
         self.start_ranging()
         if self.get_timing() == 0:
