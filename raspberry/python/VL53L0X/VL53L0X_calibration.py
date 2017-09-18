@@ -21,35 +21,27 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-import socket
-import time
+"""
+This file performs several calibrations of the VL53L0X sensor.
+"""
 
 import VL53L0X
 
 # Create a VL53L0X object
 tof = VL53L0X.VL53L0X()
 
-UDP_IP = "169.254.210.175"
-UDP_PORT = 5005
-sock = socket.socket(socket.AF_INET,  # Internet
-                     socket.SOCK_DGRAM)  # UDP
-# Start ranging
-tof.start_ranging(VL53L0X.VL53L0X_BEST_ACCURACY_MODE)
-timing = tof.get_timing()
-if (timing < 20000):
-    timing = 20000
-print ("Timing %d ms" % (timing / 1000))
-print ("Streaming data...")
-try:
-    while True:
-        distance = tof.get_distance()
-        if (distance > 0):
-            sock.sendto(str(distance), (UDP_IP, UDP_PORT))
-        time.sleep(timing / 1000000.00)
-except KeyboardInterrupt:
-    pass
-print
-print("Logging done")
+tof.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
+print("Performing SPAD calibration")
+print("Results: " + str(tof.do_spad_calibration()))
+print("SPAD calibration done")
+print('\n')
+print("Performing REF calibration")
+print("Results: " + str(tof.do_REF_calibration()))
+print("REF calibration done")
+print("Performing offset calibration")
+distance = int(raw_input("Please give the current distance of the sensor"))
+print("Results: " + str(tof.do_Offset_calibration(distance)))
+print("Offset calibration done")
+print("All calibrations done")
 
 tof.stop_ranging()

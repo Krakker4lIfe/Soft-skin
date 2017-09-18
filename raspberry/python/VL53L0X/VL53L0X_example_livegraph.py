@@ -21,6 +21,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+This file plots the measured values live on the raspberry pi.
+This is not going to work if you haven't installed the right packages, or you SSH into the raspberry pi without X sharing.
+"""
 import matplotlib
 
 matplotlib.use(u'TkAgg')

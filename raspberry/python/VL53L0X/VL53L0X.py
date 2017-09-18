@@ -202,7 +202,7 @@ class VL53L0X(object):
         Offset = c_uint(0)
         pOffset = pointer(Offset)
         Status = tof_lib.VL53L0X_PerformOffsetCalibration(Dev, distance, pOffset)
-        if (Status == 0):
+        if Status == 0:
             return "Offset: " + str(Offset.value)
         return "Error"
 
@@ -213,7 +213,7 @@ class VL53L0X(object):
         CompRate = c_uint(0)
         pCompRate = pointer(CompRate)
         Status = tof_lib.VL53L0X_PerformXTalkCalibration(Dev, distance, pCompRate)
-        if (Status == 0):
+        if Status == 0:
             return "XTalk Compensation Rate: " + str(CompRate.value)
         return "Error"
 
